@@ -12,6 +12,8 @@
 
 using namespace mitus;
 
+enum class TimeFormat { H12, H24 };
+
 class MappedFile {
     void* addr_{nullptr};
     size_t size_{0};
@@ -42,8 +44,11 @@ class mituEngine {
     const StaticNode* nodes_{nullptr};
     const MetadataRecord* recs_{nullptr};
     const char* pool_{nullptr};
+    TimeFormat time_format_{TimeFormat::H24}; // default to 24h
 
 public:
+    void setTimeFormat(TimeFormat fmt) { time_format_ = fmt; }
+
     bool init(const std::string& path) {
         file_ = std::make_unique<MappedFile>(path);
         if (!file_->valid()) return false;
@@ -110,7 +115,13 @@ public:
             try {
                 const auto now = std::chrono::system_clock::now();
                 const auto zoned = std::chrono::zoned_time{std::string(tz_name), now};
-                std::cout << "Local Time: " << std::format("{:%H:%M (%Z)}", zoned) << "\n";
+                
+                if (time_format_ == TimeFormat::H24) {
+                    std::cout << "Local Time: " << std::format("{:%H:%M}", zoned) << "\n";
+                } else {
+                    std::cout << "Local Time: " << std::format("{:%I:%M %p}", zoned) << "\n";
+                }
+
             } catch (...) {
                 std::cout << "Local Time: Calculation error (Check system tzdata)\n";
             }
@@ -144,6 +155,7 @@ int main(int argc, char** argv) {
     }
 
     mituEngine engine;
+    engine.setTimeFormat(TimeFormat::H12);
     if (engine.init("mitu.db")) {
         engine.lookup(sanitized);
     } else {
