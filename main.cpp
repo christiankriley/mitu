@@ -109,9 +109,15 @@ public:
         }
 
         if (last_tz_rec) {
-            const auto tz_name = get_s(last_tz_rec->tz_off);
+            const std::string_view tz_full = get_s(last_tz_rec->tz_off);
+            std::string_view tz_name = tz_full;
+            // Only display one timezone name
+            if (auto pos = tz_full.find('&'); pos != std::string_view::npos) {
+                tz_name = tz_full.substr(0, pos);
+            }
+
             std::cout << "Timezone: " << tz_name << "\n";
-            
+
             try {
                 const auto now = std::chrono::system_clock::now();
                 const auto zoned = std::chrono::zoned_time{std::string(tz_name), now};
