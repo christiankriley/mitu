@@ -1,5 +1,5 @@
-#ifndef MITU_H
-#define MITU_H
+#ifndef MITU_HPP
+#define MITU_HPP
 
 #include <cstdint>
 #include <array>
@@ -28,4 +28,4 @@ struct FileHeader {
 
 } // namespace mitus
 
-#endif // MITU_H
+#endif // MITU_HPP
