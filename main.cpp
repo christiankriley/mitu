@@ -57,13 +57,17 @@ public:
     }
 
     void lookup(std::string_view num) const {
+        // we are starting w/ sanitized num, E.164 max length is 15 digits
+        if (num.length() > 15) {
+            std::cout << "Invalid number: Too long.\n";
+            return;
+        }
+        
         int32_t curr_node_idx = 0; 
         const MetadataRecord* last_loc_rec = nullptr;
         const MetadataRecord* last_tz_rec = nullptr;
 
         for (const char c : num) {
-            if (!std::isdigit(static_cast<unsigned char>(c))) continue;
-            
             const int digit = c - '0';
             const int32_t next_node_idx = nodes_[curr_node_idx].children[digit];
             
@@ -122,9 +126,26 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    std::string sanitized;
+    bool leading_zeros = true; // assume there may be leading zeros
+
+    for (int i = 1; i < argc; ++i) {
+        for (char c : std::string_view(argv[i])) {
+            // skip non-digit chars
+            if (std::isdigit(static_cast<unsigned char>(c))) {
+                // skip leading zeros
+                if (leading_zeros && c == '0') {
+                    continue;
+                }
+                leading_zeros = false;
+                sanitized += c;
+            }
+        }
+    }
+
     mituEngine engine;
     if (engine.init("mitu.db")) {
-        engine.lookup(argv[1]);
+        engine.lookup(sanitized);
     } else {
         std::cerr << "Error: Could not initialize mitu.db\n";
         return 1;
