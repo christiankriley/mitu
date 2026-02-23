@@ -6,6 +6,9 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+#include <limits>
+#include <stdexcept>
+#include <string_view>
 
 using namespace mitus;
 
@@ -22,6 +25,11 @@ class MapBuilder {
 
     int32_t add_to_pool(std::string_view s) {
         if (s.empty()) return -1;
+
+        if (string_pool.size() + s.size() + 1 > static_cast<size_t>(std::numeric_limits<int32_t>::max())) {
+            throw std::runtime_error("String pool overflow");
+        }
+
         const auto off = static_cast<int32_t>(string_pool.size());
         string_pool.append(s);
         string_pool.push_back('\0');
@@ -54,7 +62,8 @@ public:
                 } else {
                     if (const auto c = val.find(','); c != std::string::npos) {
                         node->record.city_off = add_to_pool(val.substr(0, c));
-                        node->record.state_off = add_to_pool(val.substr(c + 2));
+                        std::string_view state = (val.size() > c + 2) ? val.substr(c + 2) : "";
+                        node->record.state_off = add_to_pool(state);
                     } else {
                         node->record.state_off = add_to_pool(val);
                     }
@@ -86,8 +95,19 @@ public:
                 flat_nodes[i].children[ch - '0'] = child->id;
         }
 
+        uint32_t crc = 0xFFFFFFFF;
+        crc = calculate_crc32(flat_nodes.data(), flat_nodes.size() * sizeof(StaticNode), crc);
+        crc = calculate_crc32(flat_records.data(), flat_records.size() * sizeof(MetadataRecord), crc);
+        crc = calculate_crc32(string_pool.data(), string_pool.size(), crc);
+        
+        FileHeader head{};
+        head.magic = 0x4D495455; // MITU
+        head.version = 1;
+        head.node_count = static_cast<uint32_t>(flat_nodes.size());
+        head.record_count = static_cast<uint32_t>(flat_records.size());
+        head.checksum = ~crc;
+
         std::ofstream out(out_path, std::ios::binary);
-        FileHeader head{(uint32_t)flat_nodes.size(), (uint32_t)flat_records.size()};
         out.write(reinterpret_cast<const char*>(&head), sizeof(head));
         out.write(reinterpret_cast<const char*>(flat_nodes.data()), flat_nodes.size() * sizeof(StaticNode));
         out.write(reinterpret_cast<const char*>(flat_records.data()), flat_records.size() * sizeof(MetadataRecord));

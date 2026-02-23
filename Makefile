@@ -1,5 +1,11 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -O3 -Wall
+
+APP_VERSION = 0.1.0
+SCHEMA_VERSION = 1
+
+CXXFLAGS = -std=c++20 -O3 -Wall \
+           -DAPP_VERSION=\"$(APP_VERSION)\" \
+           -DSCHEMA_VERSION=$(SCHEMA_VERSION)
 HEADER = mitu.hpp
 
 all: mitu
