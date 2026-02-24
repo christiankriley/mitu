@@ -15,17 +15,19 @@ Current Version: 0.2.0
 **Compilation:**
 
 Linux:
-``git clone https://github.com/christiankriley/mitu.git``
-``make``
+```
+git clone https://github.com/christiankriley/mitu.git
+make
+```
 
 macOS:
 
-You will need to [use Homebrew](https://github.com/Homebrew/brew/releases/latest) to install GCC because Clang does not fully support the C++ 20 <chrono> timezone library.
-
-``brew install gcc``
-``git clone https://github.com/christiankriley/mitu.git``
-``ls /opt/homebrew/bin/g++-*`` (use whatever g++ version is returned, currently 15)
-``make CXX=/opt/homebrew/bin/g++-15``
+You will need to [use Homebrew](https://github.com/Homebrew/brew/releases/latest) to install GCC because Clang does not fully support the C++ 20 <chrono> timezone library. Fortunately, the Makefile handles finding GCC automatically once its installed.
+```
+brew install gcc
+git clone https://github.com/christiankriley/mitu.git
+make
+```
 
 **Usage:**
 
