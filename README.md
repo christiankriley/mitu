@@ -6,6 +6,7 @@ Current Version: 0.2.0
 - Massive performance achieved through a flattened static trie, memory-mapped database, and precached timezone lookups.
 - Rigid memory safety by ulitizing RAII, bound-safe string views, and static_assert for binary layout verification.
 - Strict database validation using CRC32 checksums, magic number verification, and schema versioning.
+- Support for both 32-bit and 64-bit processors with x86_64 and ARM architecture on Unix-like systems. (Note: Windows and Big Endian are not yet supported) 
 
 **What's new?** 0.2.0 adds full international location identification through a country masterlist. We also now automatically load all country calling code data.
 
