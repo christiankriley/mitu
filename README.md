@@ -12,4 +12,24 @@ Current Version: 0.2.0
 
 **What's next?** My top priorities are multithreading for batch processing and a fully functional user config file. Eventually, I'll look into building an extended default dataset.
 
+**Compilation:**
+
+Linux:
+``git clone https://github.com/christiankriley/mitu.git``
+``make``
+
+macOS:
+
+You will need to [use Homebrew](https://github.com/Homebrew/brew/releases/latest) to install GCC because Clang does not fully support the C++ 20 <chrono> timezone library.
+
+``brew install gcc``
+``git clone https://github.com/christiankriley/mitu.git``
+``ls /opt/homebrew/bin/g++-*`` (use whatever g++ version is returned, currently 15)
+``make CXX=/opt/homebrew/bin/g++-15``
+
+**Usage:**
+
+``./mitu 15555555555``
+``./mitu --version``
+
 See TODO.md for in-progress and implemented features.
