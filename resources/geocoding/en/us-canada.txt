@@ -1,0 +1,365 @@
+# CURRENTLY NOT IN USE
+# This will override the masterlist to append USA or Canada to US states or Canadian provinces.
+# Note: US territories are defined in the masterlist.
+# @ https://github.com/christiankriley/mitu/tree/main/resources/geocoding/en/us-canada.txt
+# MIT License: https://github.com/christiankriley/mitu/blob/main/LICENSE
+
+# US States
+1201|New Jersey, USA
+1202|Washington D.C., USA
+1203|Connecticut, USA
+1205|Alabama, USA
+1206|Washington, USA
+1207|Maine, USA
+1208|Idaho, USA
+1209|California, USA
+1212|New York, NY, USA
+1213|Los Angeles, CA, USA
+1214|Texas, USA
+1215|Pennsylvania, USA
+1216|Ohio, USA
+1217|Illinois, USA
+1218|Minnesota, USA
+1219|Indiana, USA
+1220|Ohio, USA
+1223|Pennsylvania, USA
+1224|Illinois, USA
+1225|Louisiana, USA
+1227|Maryland, USA
+1228|Mississippi, USA
+1229|Georgia, USA
+1231|Michigan, USA
+1234|Ohio, USA
+1235|Missouri, USA
+1239|Florida, USA
+1240|Maryland, USA
+1248|Michigan, USA
+1251|Alabama, USA
+1252|North Carolina, USA
+1253|Washington, USA
+1254|Texas, USA
+1256|Alabama, USA
+1260|Indiana, USA
+1262|Wisconsin, USA
+1267|Pennsylvania, USA
+1269|Michigan, USA
+1270|Kentucky, USA
+1272|Pennsylvania, USA
+1274|Wisconsin, USA
+1276|Virginia, USA
+1279|California, USA
+1281|Texas, USA
+1283|Ohio, USA
+1301|Maryland, USA
+1302|Delaware, USA
+1303|Colorado, USA
+1304|West Virginia, USA
+1305|Florida, USA
+1307|Wyoming, USA
+1308|Nebraska, USA
+1309|Illinois, USA
+1310|California, USA
+1312|Illinois, USA
+1313|Michigan, USA
+1314|Missouri, USA
+1315|New York, USA
+1316|Kansas, USA
+1317|Indiana, USA
+1318|Louisiana, USA
+1319|Iowa, USA
+1320|Minnesota, USA
+1321|Florida, USA
+1323|California, USA
+1325|Texas, USA
+1330|Ohio, USA
+1331|Illinois, USA
+1334|Alabama, USA
+1336|North Carolina, USA
+1337|Louisiana, USA
+1339|Massachusetts, USA
+1346|Texas, USA
+1347|New York, USA
+1351|Massachusetts, USA
+1352|Florida, USA
+1360|Washington, USA
+1361|Texas, USA
+1364|Kentucky, USA
+1380|Ohio, USA
+1385|Utah, USA
+1386|Florida, USA
+1401|Rhode Island, USA
+1402|Rhode Island, USA
+1404|Georgia, USA
+1405|Oklahoma, USA
+1406|Montana, USA
+1407|Florida, USA
+1408|California, USA
+1409|Texas, USA
+1410|Maryland, USA
+1412|Pennsylvania, USA
+1413|Massachusetts, USA
+1414|Wisconsin, USA
+1415|California, USA
+1417|Missouri, USA
+1419|Ohio, USA
+1423|Mississippi, USA
+1424|California, USA
+1425|Washington, USA
+1430|Georgia, USA
+1432|New York, USA
+1434|Virginia, USA
+1435|Minnesota, USA
+1438|New Jersey, USA
+1440|Ohio, USA
+1442|California, USA
+1443|Ohio, USA
+1447|Illinois, USA
+1458|Oregon, USA
+1463|Indiana, USA
+1464|California, USA
+1469|Texas, USA
+1470|Georgia, USA
+1475|Georgia, USA
+1478|Georgia, USA
+1479|Florida, USA
+1480|Arizona, USA
+1484|Pennsylvania, USA
+1501|Arkansas, USA
+1502|Kentucky, USA
+1503|Oregon, USA
+1504|Louisiana, USA
+1505|New Mexico, USA
+1507|Minnesota, USA
+1508|Massachusetts, USA
+1509|Washington, USA
+1510|California, USA
+1512|Texas, USA
+1513|Ohio, USA
+1515|Iowa, USA
+1516|New York, USA
+1517|Michigan, USA
+1518|New York, USA
+1520|Arizona, USA
+1530|California, USA
+1531|Nebraska, USA
+1534|Wisconsin, USA
+1539|Oklahoma, USA
+1540|Virginia, USA
+1541|Oregon, USA
+1551|New Jersey, USA
+1559|California, USA
+1561|Florida, USA
+1562|California, USA
+1563|Iowa, USA
+1564|Washington, USA
+1567|Ohio, USA
+1570|Pennsylvania, USA
+1571|Virginia, USA
+1573|Missouri, USA
+1574|Indiana, USA
+1575|New Mexico, USA
+1601|Mississippi, USA
+1602|California, USA
+1603|New Hampshire, USA
+1605|South Dakota, USA
+1606|Kentucky, USA
+1607|New York, USA
+1608|Wisconsin, USA
+1609|New Jersey, USA
+1610|Pennsylvania, USA
+1612|Minnesota, USA
+1614|Ohio, USA
+1615|Tennessee, USA
+1616|Michigan, USA
+1617|Massachusetts, USA
+1618|Illinois, USA
+1619|California, USA
+1620|Kansas, USA
+1623|Arizona, USA
+1626|California, USA
+1629|Tennessee, USA
+1630|Illinois, USA
+1631|New York, USA
+1636|Missouri, USA
+1640|New Jersey, USA
+1641|Iowa, USA
+1646|New York, USA
+1650|California, USA
+1651|Minnesota, USA
+1659|Alabama, USA
+1660|Missouri, USA
+1661|California, USA
+1662|Mississippi, USA
+1667|Maryland, USA
+1669|California, USA
+1678|Georgia, USA
+1681|West Virginia, USA
+1682|Texas, USA
+1701|North Dakota, USA
+1702|Nevada, USA
+1703|Virginia, USA
+1704|North Carolina, USA
+1706|Georgia, USA
+1707|California, USA
+1708|Illinois, USA
+1712|Iowa, USA
+1713|Texas, USA
+1714|California, USA
+1715|Wisconsin, USA
+1716|New York, USA
+1717|Pennsylvania, USA
+1719|Colorado, USA
+1720|Colorado, USA
+1724|Pennsylvania, USA
+1725|Nevada, USA
+1726|Texas, USA
+1727|Florida, USA
+1731|Tennessee, USA
+1732|New Jersey, USA
+1734|Michigan, USA
+1737|Texas, USA
+1740|Ohio, USA
+1747|California, USA
+1754|Florida, USA
+1757|Virginia, USA
+1760|California, USA
+1762|Georgia, USA
+1763|Minnesota, USA
+1765|Indiana, USA
+1769|Mississippi, USA
+1770|Georgia, USA
+1771|Washington D.C., USA
+1772|Florida, USA
+1773|Illinois, USA
+1774|Massachusetts, USA
+1779|Illinois, USA
+1781|Massachusetts, USA
+1785|Kansas, USA
+1786|Florida, USA
+1801|Utah, USA
+1802|Vermont, USA
+1803|South Carolina, USA
+1804|Virginia, USA
+1805|California, USA
+1806|Texas, USA
+1808|Hawaii, USA
+1810|Michigan, USA
+1812|Indiana, USA
+1813|Florida, USA
+1814|Pennsylvania, USA
+1815|Illinois, USA
+1816|Missouri, USA
+1817|Texas, USA
+1818|California, USA
+1828|North Carolina, USA
+1830|Texas, USA
+1831|California, USA
+1832|Texas, USA
+1835|Pennsylvania, USA
+1843|South Carolina, USA
+1845|New York, USA
+1847|Illinois, USA
+1848|New Jersey, USA
+1850|Florida, USA
+1854|South Carolina, USA
+1856|New Jersey, USA
+1857|Massachusetts, USA
+1858|California, USA
+1859|Kentucky, USA
+1860|Connecticut, USA
+1862|New Jersey, USA
+1863|Florida, USA
+1864|South Carolina, USA
+1865|Tennessee, USA
+1870|Arkansas, USA
+1872|Illinois, USA
+1878|Pennsylvania, USA
+1901|Tennessee, USA
+1903|Texas, USA
+1904|Florida, USA
+1906|Michigan, USA
+1907|Alaska, USA
+1908|New Jersey, USA
+1909|California, USA
+1910|North Carolina, USA
+1912|Georgia, USA
+1913|Kansas, USA
+1914|New York, USA
+1915|Texas, USA
+1916|California, USA
+1917|New York, USA
+1918|Oklahoma, USA
+1919|North Carolina, USA
+1920|Wisconsin, USA
+1925|California, USA
+1928|Arizona, USA
+1929|New York, USA
+1930|Indiana, USA
+1931|Tennessee, USA
+1934|New York, USA
+1936|Texas, USA
+1937|Ohio, USA
+1938|Alabama, USA
+1938|Virginia, USA
+1940|Texas, USA
+1941|Florida, USA
+1947|Michigan, USA
+1949|California, USA
+1951|California, USA
+1952|Minnesota, USA
+1954|Florida, USA
+1956|Texas, USA
+1959|Connecticut, USA
+1970|Colorado, USA
+1971|Oregon, USA
+1972|Texas, USA
+1973|New Jersey, USA
+1978|Massachusetts, USA
+1979|Texas, USA
+1980|North Carolina, USA
+1984|North Carolina, USA
+1985|Louisiana, USA
+1986|Idaho, USA
+1989|Michigan, USA
+
+# Canadian Provinces
+1204|Manitoba, Canada
+1226|Ontario, Canada
+1236|British Columbia, Canada
+1249|Ontario, Canada
+1250|British Columbia, Canada
+1257|British Colombia, Canada
+1289|Ontario, Canada
+1306|Saskatchewan, Canada
+1343|Ontario, Canada
+1365|Ontario, Canada
+1403|Alberta, Canada
+1416|Ontario, Canada
+1418|Quebec, Canada
+1431|Manitoba, Canada
+1438|Quebec, Canada
+1450|Quebec, Canada
+1506|New Brunswick, Canada
+1514|Quebec, Canada
+1519|Ontario, Canada
+1548|Ontario, Canada
+1579|Quebec, Canada
+1581|Quebec, Canada
+1584|Manitoba, Canada
+1587|Alberta, Canada
+1604|British Columbia, Canada
+1613|Ontario, Canada
+1639|Saskatchewan, Canada
+1647|Ontario, Canada
+1705|Ontario, Canada
+1709|Newfoundland and Labrador, Canada
+1742|Ontario, Canada
+1778|British Columbia, Canada
+1780|Alberta, Canada
+1807|Ontario, Canada
+1819|Quebec, Canada
+1825|Alberta, Canada
+1867|Northwest Territories / Nunavut / Yukon, Canada
+1873|Quebec, Canada
+1902|Nova Scotia / Prince Edward Island, Canada
+1905|Ontario, Canada

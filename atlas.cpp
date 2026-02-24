@@ -9,8 +9,11 @@
 #include <limits>
 #include <stdexcept>
 #include <string_view>
+#include <set>
+#include <filesystem>
 
 using namespace mitus;
+namespace fs = std::filesystem;
 
 // use a trie to follow digits so we don't have to look at everything
 struct LiveNode {
@@ -22,6 +25,7 @@ struct LiveNode {
 class MapBuilder {
     // avoid costly string objects by using a single pool
     std::string string_pool;
+    std::set<std::string> country_prefixes;
 
     int32_t add_to_pool(std::string_view s) {
         if (s.empty()) return -1;
@@ -52,26 +56,48 @@ public:
     void load_data(LiveNode& root, const std::string& path, bool is_tz) {
         std::ifstream file(path);
         if (!file) return;
+
+        bool is_masterlist = (path.find("masterlist.txt") != std::string::npos); // known country codes
+
         for (std::string line; std::getline(file, line); ) {
             if (line.empty() || line[0] == '#') continue;
             if (const auto p = line.find('|'); p != std::string::npos) {
-                auto* node = get_or_create(root, line.substr(0, p));
+                std::string prefix_str = line.substr(0, p);
+                std::string_view prefix = prefix_str;
+                auto* node = get_or_create(root, prefix);
                 auto val = line.substr(p + 1);
                 if (is_tz) {
                     node->record.tz_off = add_to_pool(val);
                 } else {
                     if (const auto c = val.find(','); c != std::string::npos) {
+                        // city, state (nanp) format
                         node->record.city_off = add_to_pool(val.substr(0, c));
                         std::string_view state = (val.size() > c + 2) ? val.substr(c + 2) : "";
                         node->record.state_off = add_to_pool(state);
                     } else {
+                        // append country to city for non-nanp entries
+                        bool is_city = false;
+                        if (!is_masterlist) {
+                            if (!prefix.starts_with('1')) {
+                                for (size_t len = 1; len < prefix.size(); ++len) {
+                                    if (country_prefixes.count(std::string(prefix.substr(0, len)))) {
+                                        is_city = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    if (is_city) {
+                        node->record.city_off = add_to_pool(val);
+                    } else {
                         node->record.state_off = add_to_pool(val);
+                        if (is_masterlist) country_prefixes.insert(prefix_str);
                     }
                 }
             }
         }
     }
-
+}
     // flatten to a binary blob for fast memory-mapped lookups
     void flatten(LiveNode& root, const std::string& out_path) {
         std::vector<StaticNode> flat_nodes;
@@ -82,7 +108,7 @@ public:
             LiveNode* l = queue[i];
             l->id = static_cast<int32_t>(flat_nodes.size());
             StaticNode sn;
-            if (l->record.city_off != -1 || l->record.tz_off != -1) {
+            if (l->record.city_off != -1 || l->record.state_off != -1 || l->record.tz_off != -1) {
                 sn.record_idx = static_cast<int32_t>(flat_records.size());
                 flat_records.push_back(l->record);
             }
@@ -102,7 +128,7 @@ public:
         
         FileHeader head{};
         head.magic = 0x4D495455; // MITU
-        head.version = 1;
+        head.version = S_VERSION;
         head.node_count = static_cast<uint32_t>(flat_nodes.size());
         head.record_count = static_cast<uint32_t>(flat_records.size());
         head.checksum = ~crc;
@@ -116,11 +142,33 @@ public:
 };
 
 int main() {
-    LiveNode root; MapBuilder builder;
-    builder.load_data(root, "resources/geocoding/en/1.txt", false);
+    LiveNode root; 
+    MapBuilder builder;
+    const std::string geocode_path = "resources/geocoding/en/";
+
+    builder.load_data(root, geocode_path + "masterlist.txt", false);
+    // builder.load_data(root, geocode_path + "us-canada.txt", false);
+
+    try {
+        for (const auto& entry : fs::directory_iterator(geocode_path)) {
+            if (!entry.is_regular_file()) continue;
+            std::string filename = entry.path().stem().string();
+            
+            bool is_numeric = !filename.empty() && std::all_of(filename.begin(), filename.end(), ::isdigit);
+            if (is_numeric) {
+                builder.load_data(root, entry.path().string(), false);
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        std::cerr << "Error reading geocoding directory: " << e.what() << "\n";
+        return 1;
+    }
+
     builder.load_data(root, "resources/geocoding/en/custom.txt", false);
+
     builder.load_data(root, "resources/timezones/map_data.txt", true);
     builder.load_data(root, "resources/timezones/custom_tz.txt", true);
+
     builder.flatten(root, "mitu.db");
     return 0;
 }

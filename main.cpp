@@ -183,6 +183,8 @@ public:
         int32_t curr_node_idx = 0; 
         const MetadataRecord* last_loc_rec = nullptr;
         const MetadataRecord* last_tz_rec = nullptr;
+        int32_t current_city_off = -1;
+        int32_t current_state_off = -1;
 
         for (const char c : num) {
             const int digit = c - '0';
@@ -198,9 +200,8 @@ public:
             if (rec_idx != -1 && static_cast<uint32_t>(rec_idx) < record_count_) {
                 const auto* current_rec = &recs_[rec_idx];
                 
-                if (current_rec->city_off != -1 || current_rec->state_off != -1) {
-                    last_loc_rec = current_rec;
-                }
+                if (current_rec->city_off != -1) current_city_off = current_rec->city_off;
+                if (current_rec->state_off != -1) current_state_off = current_rec->state_off;
                 
                 if (current_rec->tz_off != -1) {
                     last_tz_rec = current_rec;
@@ -217,10 +218,16 @@ public:
         output.reserve(256);
         output += "(o>\n";
 
-        if (last_loc_rec) {
-            output += std::format("Location: {}, {}\n", 
-                    get_s(last_loc_rec->city_off), 
-                    get_s(last_loc_rec->state_off));
+        if (current_city_off != -1 || current_state_off != -1) {
+            std::string_view city = get_s(current_city_off);
+            std::string_view state = get_s(current_state_off);
+
+            if (current_city_off != -1 && current_state_off != -1) {
+                output += std::format("Location: {}, {}\n", city, state);
+            } else {
+                output += std::format("Location: {}\n", (current_state_off != -1) ? state : city);
+            }
+
         }
 
         if (last_tz_rec) {

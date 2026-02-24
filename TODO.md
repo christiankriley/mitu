@@ -1,5 +1,4 @@
 TODO:
-- Handle "unknown" city more elegantly, simply say the state or country for example
 - Implement user config file to configure time format, dataset dir, sets to include (e.g. 1.txt for North America)
 - Provide an update feature that will pull latest data from google/libphonenumber github repo and rebuild database
 - Potentially add carrier information from google/libphonenumber
@@ -19,3 +18,5 @@ IMPLEMENTED:
 - Memory safety(tm)
 - Check for file corruption/data integrity/compatability (implemented magic number, checksum, and schema version)
 - Optimized timezone retreival, by caching timezones and using pointers, return time went from ~3.4 ms to ~0.03 ms (a 99% improvement)
+- Handle "unknown" city more elegantly, simply say the state or country for example
+- 0.2.0 adds full international location identification through a country masterlist. We also now automatically load all country calling code data.
