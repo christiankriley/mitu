@@ -6,6 +6,19 @@ SCHEMA_VERSION = 2
 CXXFLAGS = -std=c++20 -O3 -Wall \
            -DAPP_VERSION=\"$(APP_VERSION)\" \
            -DSCHEMA_VERSION=$(SCHEMA_VERSION)
+
+UNAME_S := $(shell uname -s)
+
+# 2/24/2026 - Clang does not fully support our C++20 libraries, so we will use the latest GCC from Homebrew on macOS if available.
+ifeq ($(UNAME_S),Darwin)
+BREW_GCCS := $(wildcard /opt/homebrew/bin/g++-*)
+CXX := $(lastword $(sort $(BREW_GCCS)))
+ifeq ($(CXX),)
+CXX = g++
+CXXFLAGS += -D_LIBCPP_ENABLE_EXPERIMENTAL
+endif
+endif
+
 HEADER = mitu.hpp
 
 all: mitu
