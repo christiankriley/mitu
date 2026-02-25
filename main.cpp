@@ -1,16 +1,26 @@
 #include "mitu.hpp"
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <chrono>
 #include <format>
 #include <memory>
 #include <string_view>
+#include <cctype>
+#include <cstring>
+#include <unordered_map>
+#include <limits>
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#else
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <cstring>
-#include <unordered_map>
+#endif
 
 using namespace mitus;
 
@@ -18,9 +28,24 @@ enum class TimeFormat { H12, H24 };
 
 class MappedFile {
     void* addr_{nullptr};
-    size_t size_{0};
+     size_t size_{0};
 public:
     explicit MappedFile(const std::string& path) {
+        #ifdef _WIN32
+        HANDLE hFile = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (hFile != INVALID_HANDLE_VALUE) {
+            LARGE_INTEGER fs;
+            if (GetFileSizeEx(hFile, &fs)) {
+                size_ = static_cast<size_t>(fs.QuadPart);
+                HANDLE hMap = CreateFileMappingA(hFile, NULL, PAGE_READONLY, 0, 0, NULL);
+                if (hMap) {
+                    addr_ = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 0);
+                    CloseHandle(hMap);
+                }
+            }
+            CloseHandle(hFile);
+        }
+        #else
         int fd = open(path.c_str(), O_RDONLY);
         if (fd >= 0) {
             struct stat st;
@@ -30,15 +55,28 @@ public:
             }
             close(fd);
         }
+        #endif
     }
-    ~MappedFile() { if (addr_ && addr_ != MAP_FAILED) munmap(addr_, size_); }
+    ~MappedFile() { 
+        #ifdef _WIN32
+        if (addr_) UnmapViewOfFile(addr_);
+        #else
+        if (addr_ && addr_ != MAP_FAILED) munmap(addr_, size_); 
+        #endif
+    }
     
 
     MappedFile(const MappedFile&) = delete;
     MappedFile& operator=(const MappedFile&) = delete;
 
     [[nodiscard]] const void* data() const noexcept { return addr_; }
-    [[nodiscard]] bool valid() const noexcept { return addr_ && addr_ != MAP_FAILED; }
+    [[nodiscard]] bool valid() const noexcept {
+        #ifdef _WIN32
+        return addr_ != nullptr;
+        #else
+        return addr_ && addr_ != MAP_FAILED; 
+        #endif
+    }
     [[nodiscard]] size_t size() const noexcept { return size_; }
 };
 
@@ -54,6 +92,10 @@ class mituEngine {
 
     TimeFormat time_format_{TimeFormat::H24}; // default to 24h
     bool measure_performance_{true}; // output operation time in ms for each lookup
+
+    #ifdef _WIN32
+    LARGE_INTEGER qpc_freq_{};
+    #endif
 
     std::unordered_map<std::string_view, const std::chrono::time_zone*> tz_cache_;
 
@@ -134,6 +176,11 @@ public:
         pool_ = base + required_min;
         pool_size_ = fileSize - required_min;
 
+        #ifdef _WIN32
+        QueryPerformanceFrequency(&qpc_freq_);
+        const auto now = std::chrono::system_clock::now();
+        #endif
+
         // pre-cache timezone pointers for faster lookups
         for (uint32_t i = 0; i < record_count_; ++i) {
             const auto& rec = recs_[i];
@@ -145,7 +192,11 @@ public:
                 }
                 if (tz_cache_.find(tz_name) == tz_cache_.end()) {
                     try {
-                        tz_cache_[tz_name] = std::chrono::locate_zone(std::string(tz_name));
+                        auto* tz = std::chrono::locate_zone(std::string(tz_name));
+                        #ifdef _WIN32
+                        (void)tz->get_info(now);
+                        #endif
+                        tz_cache_[tz_name] = tz;
                     } catch (...) {
                         tz_cache_[tz_name] = nullptr; // mark as invalid
                     }
@@ -157,18 +208,28 @@ public:
 
     void lookup(std::string_view num) const {
         // PERFORMANCE MEASUREMENT START
-
+        #ifdef _WIN32
+        LARGE_INTEGER start_qpc;
+        QueryPerformanceCounter(&start_qpc);
+        #else
         const auto start_time = std::chrono::steady_clock::now();
+        #endif
 
         auto finalize_lookup = [&](const std::string& output) {
+            #ifdef _WIN32
+            LARGE_INTEGER end_qpc;
+            QueryPerformanceCounter(&end_qpc);
+            double duration_ms = static_cast<double>(end_qpc.QuadPart - start_qpc.QuadPart) * 1000.0 / qpc_freq_.QuadPart;
+            #else
+            const auto end_time = std::chrono::steady_clock::now();
+            const auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+            const double duration_ms = duration_us / 1000.0;
+            #endif
+
             std::cout << output;
 
             if (measure_performance_) {
-                const auto end_time = std::chrono::steady_clock::now();
-                const auto duration_us = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-                const double duration_ms = duration_us / 1000.0;
-                
-                std::cout << "Returned in " << duration_ms << " ms\n";
+                std::cout << "Returned in " << std::fixed << std::setprecision(4) << duration_ms << " ms\n";
             }
         };
 
@@ -222,12 +283,21 @@ public:
             std::string_view city = get_s(current_city_off);
             std::string_view state = get_s(current_state_off);
 
+            #ifdef _WIN32
+            output.append("Location: ");
+            if (current_city_off != -1 && current_state_off != -1) {
+                output.append(city).append(", ").append(state);
+            } else {
+                output.append(current_state_off != -1 ? state : city);
+            }
+            output.append("\n");
+            #else
             if (current_city_off != -1 && current_state_off != -1) {
                 output += std::format("Location: {}, {}\n", city, state);
             } else {
                 output += std::format("Location: {}\n", (current_state_off != -1) ? state : city);
             }
-
+            #endif
         }
 
         if (last_tz_rec) {
@@ -238,7 +308,11 @@ public:
                 tz_name = tz_full.substr(0, pos);
             }
 
+            #ifdef _WIN32
+            output.append("Timezone: ").append(tz_name).append("\n");
+            #else
             output += std::format("Timezone: {}\n", tz_name);
+            #endif
 
             auto it = tz_cache_.find(tz_name);
 
@@ -246,13 +320,28 @@ public:
                 try {
                     const auto now = std::chrono::system_clock::now();
                     const auto zoned = std::chrono::zoned_time{it->second, now};
-                
+    
+                    #ifdef _WIN32
+                    const auto local_time = zoned.get_local_time();
+                    const auto days = std::chrono::floor<std::chrono::days>(local_time);
+                    const std::chrono::hh_mm_ss hms{local_time - days};
+
+                    if (time_format_ == TimeFormat::H24) {
+                        output += std::format("Local Time: {:02}:{:02}\n", hms.hours().count(), hms.minutes().count());
+                    } else {
+                        int h = hms.hours().count();
+                        const char* suffix = (h >= 12) ? "PM" : "AM";
+                        h = (h % 12 == 0) ? 12 : h % 12;
+                        output += std::format("Local Time: {:02}:{:02} {}\n", h, hms.minutes().count(), suffix);
+                    }
+
+                    #else
                     if (time_format_ == TimeFormat::H24) {
                         output += std::format("Local Time: {:%H:%M}\n", zoned);
                     } else {
                         output += std::format("Local Time: {:%I:%M %p}\n", zoned);
                     }
-
+                    #endif
                 } catch (...) {
                     output += "Local Time: Calculation error (Check system tzdata)\n";
                 }

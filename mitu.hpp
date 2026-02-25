@@ -26,7 +26,7 @@ inline uint32_t calculate_crc32(const void* data, size_t length, uint32_t crc = 
     while (length--) {
         crc ^= *p++;
         for (int i = 0; i < 8; i++) {
-            crc = (crc >> 1) ^ (0xEDB88320 & (-(crc & 1)));
+            crc = (crc >> 1) ^ ((crc & 1) ? 0xEDB88320 : 0);
         }
     }
     return crc;
