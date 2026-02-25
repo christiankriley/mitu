@@ -1,3 +1,6 @@
+# WARNING: This GNUmakefile is specifically for Linux and macOS (Unix-like systems).
+# For Windows, use Makefile.
+
 CXX = g++
 
 APP_VERSION = 0.2.0
