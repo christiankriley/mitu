@@ -1,7 +1,7 @@
 # WARNING: This Makefile is specifically for Windows.
 # For Linux and macOS (Unix-like systems), use GNUmakefile.
 
-APP_VERSION = 0.2.0
+APP_VERSION = 0.3.0
 SCHEMA_VERSION = 2
 
 CXX = cl
