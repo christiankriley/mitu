@@ -237,7 +237,7 @@ public:
 
         // we are starting w/ sanitized num, E.164 max length is 15 digits
         if (num.length() > 15) {
-            std::cout << "Invalid number: Too long.\n";
+            std::cerr << "Error: Not a valid number (greater than 15 digits).\n";
             return;
         }
         
@@ -277,8 +277,10 @@ public:
 
         std::string output;
         output.reserve(256);
-        output += "(o>\n";
 
+        output += "(o> +";
+        output += num;
+        output += " <o)\n";
         if (current_city_off != -1 || current_state_off != -1) {
             std::string_view city = get_s(current_city_off);
             std::string_view state = get_s(current_state_off);
@@ -368,6 +370,18 @@ int main(int argc, char** argv) {
         std::cout << "db schema v" << S_VERSION << "\n";
         std::cout << "offline phone number info lookup tool\n";
         return 0;
+    }
+
+    for (char c : arg) {
+        if (std::isalpha(static_cast<unsigned char>(c))) {
+            std::cerr << "Error: Not a valid phone number (contains letters).\n";
+            return 1;
+        }
+    }
+
+    if (arg.empty() || arg[0] != '+') {
+        std::cerr << "Error: Phone number must begin with '+' to ensure an accurate country code lookup.\nLookups without a '+' are refused to prevent local numbers from being misinterpreted as country codes.\nIf you've already included the country code, try +" << arg << "\n";
+        return 1;
     }
 
     std::string sanitized;
