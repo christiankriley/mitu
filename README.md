@@ -42,11 +42,11 @@ cd mitu && nmake
 **Usage:**
 
 Linux & macOS:
-``./mitu 15555555555``
+``./mitu +15555556488``
 ``./mitu --version``
 
 Windows:
-``mitu.exe 15555555555``
+``mitu.exe +15555556488``
 ``mitu.exe --version``
 
 See TODO.md for in-progress and implemented features.
